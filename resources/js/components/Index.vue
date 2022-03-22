@@ -1,15 +1,34 @@
 <template>
-  <div>
-      INdex
+  <div class="w-25">
+      <div ref="dropzone" class="btn d-block p-5 bg-dark text-center text-light">
+        DROPZONE
+        
+      </div>
   </div>
 </template>
 
 <script>
-export default {
+import Dropzone from 'dropzone'
 
+export default {
+    name: 'Index',
+
+    data(){
+        return {
+            dropzone: null
+        }
+    },
+    mounted(){
+        this.dropzone = new Dropzone(this.$refs.dropzone,{
+            url: '1234'
+        })
+        console.log(this.dropzone);
+    },
 }
 </script>
 
 <style>
-
+.dropzone{
+    background: #000;
+}
 </style>
