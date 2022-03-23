@@ -5,6 +5,14 @@
         DROPZONE
       </div>
       <input @click.prevent="store" type="submit" class="btn btn-primary">
+      <div>
+          <div v-if="post">
+              <h4>{{post.title}}</h4>
+              <div v-for="image in post.images" v-bind:key="image.id">
+                <img :src="image.url" >
+              </div>
+          </div>
+      </div>
   </div>
 </template>
 
@@ -18,6 +26,7 @@ export default {
         return {
             dropzone: null,
             title: null,
+            post: null,
         }
     },
     mounted(){
@@ -26,7 +35,7 @@ export default {
             autoProcessQueue: false,
             addRemoveLinks: true,
         })
-        console.log(this.dropzone);
+        this.getPosts()
     },
 
     methods:{
@@ -40,7 +49,13 @@ export default {
             data.append('title',this.title)
             this.title = ''
             axios.post('/api/posts',data )
-            
+        },
+
+        getPosts(){
+            axios.get('/api/posts')
+            .then(res=>{
+                this.post = res.data.data
+            })
         }
     }
 }

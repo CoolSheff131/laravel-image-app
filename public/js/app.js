@@ -5379,13 +5379,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Index',
   data: function data() {
     return {
       dropzone: null,
-      title: null
+      title: null,
+      post: null
     };
   },
   mounted: function mounted() {
@@ -5394,7 +5403,7 @@ __webpack_require__.r(__webpack_exports__);
       autoProcessQueue: false,
       addRemoveLinks: true
     });
-    console.log(this.dropzone);
+    this.getPosts();
   },
   methods: {
     store: function store() {
@@ -5410,6 +5419,13 @@ __webpack_require__.r(__webpack_exports__);
       data.append('title', this.title);
       this.title = '';
       axios.post('/api/posts', data);
+    },
+    getPosts: function getPosts() {
+      var _this2 = this;
+
+      axios.get('/api/posts').then(function (res) {
+        _this2.post = res.data.data;
+      });
     }
   }
 });
@@ -28565,6 +28581,24 @@ var render = function () {
         },
       },
     }),
+    _vm._v(" "),
+    _c("div", [
+      _vm.post
+        ? _c(
+            "div",
+            [
+              _c("h4", [_vm._v(_vm._s(_vm.post.title))]),
+              _vm._v(" "),
+              _vm._l(_vm.post.images, function (image) {
+                return _c("div", { key: image.id }, [
+                  _c("img", { attrs: { src: image.url } }),
+                ])
+              }),
+            ],
+            2
+          )
+        : _vm._e(),
+    ]),
   ])
 }
 var staticRenderFns = []
