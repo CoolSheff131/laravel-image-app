@@ -5391,18 +5391,25 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.dropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0__["default"](this.$refs.dropzone, {
       url: '1234',
-      autoProcessQueue: false
+      autoProcessQueue: false,
+      addRemoveLinks: true
     });
     console.log(this.dropzone);
   },
   methods: {
     store: function store() {
-      var images = new FormData();
+      var _this = this;
+
+      var data = new FormData();
       var files = this.dropzone.getAcceptedFiles();
       files.forEach(function (file) {
-        images.append('images[]', file);
+        data.append('images[]', file);
+
+        _this.dropzone.removeFile(file);
       });
-      axios.post('/api/posts', images);
+      data.append('title', this.title);
+      this.title = '';
+      axios.post('/api/posts', data);
     }
   }
 });

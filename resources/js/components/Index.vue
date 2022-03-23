@@ -24,18 +24,22 @@ export default {
         this.dropzone = new Dropzone(this.$refs.dropzone,{
             url: '1234',
             autoProcessQueue: false,
+            addRemoveLinks: true,
         })
         console.log(this.dropzone);
     },
 
     methods:{
         store(){
-            const images = new FormData()
+            const data = new FormData()
             const files = this.dropzone.getAcceptedFiles()
             files.forEach((file)=>{
-                images.append('images[]',file)
+                data.append('images[]',file)
+                this.dropzone.removeFile(file)
             })
-            axios.post('/api/posts',images )
+            data.append('title',this.title)
+            this.title = ''
+            axios.post('/api/posts',data )
             
         }
     }
