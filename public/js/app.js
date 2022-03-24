@@ -5392,6 +5392,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5427,7 +5428,9 @@ __webpack_require__.r(__webpack_exports__);
         _this.dropzone.removeFile(file);
       });
       data.append('title', this.title);
+      data.append('title', this.content);
       this.title = '';
+      this.content = '';
       axios.post('/api/posts', data);
     },
     getPost: function getPost() {
@@ -12516,7 +12519,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropzone{\r\n    background: #000;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dz-success-mark,\r\n.dz-error-mark {\r\n    display: none;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -42270,6 +42273,11 @@ var render = function () {
                   _vm._v(" "),
                   _c("img", { attrs: { src: image.url } }),
                 ])
+              }),
+              _vm._v(" "),
+              _c("div", {
+                staticClass: "ql-editor",
+                domProps: { innerHTML: _vm._s(_vm.post.content) },
               }),
             ],
             2
