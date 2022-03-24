@@ -5402,42 +5402,67 @@ __webpack_require__.r(__webpack_exports__);
       dropzone: null,
       title: null,
       post: null,
-      content: null
+      content: null,
+      imagesIdForDelete: [],
+      imagesUrlsForDelete: []
     };
   },
   components: {
     VueEditor: vue2_editor__WEBPACK_IMPORTED_MODULE_1__.VueEditor
   },
   mounted: function mounted() {
+    var _this = this;
+
     this.dropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0__["default"](this.$refs.dropzone, {
       url: '1234',
       autoProcessQueue: false,
       addRemoveLinks: true
     });
+    this.dropzone.on('removedfile', function (file) {
+      _this.imagesIdForDelete.push(file.id);
+    });
     this.getPost();
   },
   methods: {
     store: function store() {
-      var _this = this;
+      var _this2 = this;
 
       var data = new FormData();
       var files = this.dropzone.getAcceptedFiles();
       files.forEach(function (file) {
         data.append('images[]', file);
 
-        _this.dropzone.removeFile(file);
+        _this2.dropzone.removeFile(file);
+      });
+      this.imageIdsForDelete.forEach(function (idForDelete) {
+        data.append('image_ids_for_delete[]', idForDelete);
+      });
+      this.imagesUrlsForDelete.forEach(function (urlForDelete) {
+        data.append('image_urls_for_delete[]', urlForDelete);
       });
       data.append('title', this.title);
-      data.append('title', this.content);
+      data.append('content', this.content);
       this.title = '';
       this.content = '';
       axios.post('/api/posts', data);
     },
     getPost: function getPost() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.get('/api/posts').then(function (res) {
-        _this2.post = res.data.data;
+        _this3.post = res.data.data;
+        _this3.title = res.data.title;
+        _this3.content = res.data.content;
+
+        _this3.post.images.forEach(function (image) {
+          var file = {
+            id: image.id,
+            name: image.name,
+            size: image.size
+          };
+
+          _this3.dropzone.displayExistingFile(file, image.url);
+        });
       });
     },
     handleImageAdded: function handleImageAdded(file, Editor, cursosLocation, resetUploader) {
@@ -5448,6 +5473,9 @@ __webpack_require__.r(__webpack_exports__);
         Editor.insertEmbed(cursosLocation, 'image', url);
         resetUploader();
       });
+    },
+    handleImageRemoved: function handleImageRemoved(url) {
+      this.imagesUrlsForDelete.push(url);
     }
   }
 });
@@ -42247,7 +42275,10 @@ var render = function () {
       [
         _c("vue-editor", {
           attrs: { useCustomImageHandler: "" },
-          on: { "image-added": _vm.handleImageAdded },
+          on: {
+            "image-removed": _vm.handleImageRemoved,
+            "image-added": _vm.handleImageAdded,
+          },
           model: {
             value: _vm.content,
             callback: function ($$v) {

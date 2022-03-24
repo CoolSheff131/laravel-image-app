@@ -22,6 +22,7 @@ Route::group(['prefix' => 'posts', 'namespace' => 'Post'], function () {
     Route::group(['prefix' => 'images', 'namespace' => 'Image'], function () {
         Route::post('/', 'StoreController');
     });
-    Route::post('/', 'StoreController');
+    Route::post('/{post}', 'StoreController');
+    Route::patch('/', 'UpdateController');
     Route::get('/', 'IndexController');
 });

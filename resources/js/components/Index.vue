@@ -6,7 +6,7 @@
       </div>
       <input @click.prevent="store" type="submit" class="btn btn-primary">
       <div>
-          <vue-editor useCustomImageHandler @image-added="handleImageAdded" v-model="content"></vue-editor>
+          <vue-editor useCustomImageHandler @image-removed="handleImageRemoved" @image-added="handleImageAdded" v-model="content"></vue-editor>
       </div>
       <div>
           <div v-if="post">
@@ -34,6 +34,8 @@ export default {
             title: null,
             post: null,
             content: null,
+            imagesIdForDelete:[],
+            imagesUrlsForDelete:[],
         }
     },
 
@@ -47,6 +49,9 @@ export default {
             autoProcessQueue: false,
             addRemoveLinks: true,
         })
+        this.dropzone.on('removedfile',file=>{
+            this.imagesIdForDelete.push(file.id)
+        })
         this.getPost()
     },
 
@@ -58,8 +63,14 @@ export default {
                 data.append('images[]',file)
                 this.dropzone.removeFile(file)
             })
+            this.imageIdsForDelete.forEach(idForDelete => {
+                data.append('image_ids_for_delete[]', idForDelete)
+            })
+            this.imagesUrlsForDelete.forEach(urlForDelete => {
+                data.append('image_urls_for_delete[]', urlForDelete)
+            })
             data.append('title',this.title)
-            data.append('title',this.content)
+            data.append('content',this.content)
             this.title = ''
             this.content = ''
             axios.post('/api/posts',data )
@@ -69,6 +80,14 @@ export default {
             axios.get('/api/posts')
             .then(res=>{
                 this.post = res.data.data
+
+                this.title = res.data.title
+                this.content = res.data.content
+                this.post.images.forEach(image=>{
+                    let file = {id: image.id, name: image.name, size: image.size}
+                    this.dropzone.displayExistingFile(file,image.url)
+
+                })
             })
         },
         handleImageAdded(file, Editor, cursosLocation, resetUploader){
@@ -80,6 +99,10 @@ export default {
                 Editor.insertEmbed(cursosLocation, 'image',url)
                 resetUploader()
             })
+        },
+
+        handleImageRemoved(url){
+            this.imagesUrlsForDelete.push(url)
         }
     }
 }
