@@ -20,12 +20,17 @@ class StoreController extends Controller
         $post = Post::firstOrCreate($data);
         foreach ($images as $image) {
             $name = Carbon::now() . '_' . $image->getClientOriginalName() . '.' . $image->getClientOriginalExtension();
+            $previewName = 'prev_' . $name;
             $filepath = Storage::disk('public')->putFileAs('/images', $image, $name);
             Image::create([
                 'path' => $filepath,
                 'url' => url('/storage/' . $filepath),
+                'preview_url' => url('/storage/images' . $previewName),
                 'post_id' => $post->id,
             ]);
+
+            \Intervention\Image\Facades\Image::make($image)->fit(100, 100)
+                ->save(storage_path('app/public/images/' . $previewName));
         }
 
         return response()->json(['message' => 'success']);

@@ -9,6 +9,7 @@
           <div v-if="post">
               <h4>{{post.title}}</h4>
               <div v-for="image in post.images" v-bind:key="image.id">
+                <img :src="image.preview_url" >
                 <img :src="image.url" >
               </div>
           </div>
@@ -35,7 +36,7 @@ export default {
             autoProcessQueue: false,
             addRemoveLinks: true,
         })
-        this.getPosts()
+        this.getPost()
     },
 
     methods:{
@@ -51,7 +52,7 @@ export default {
             axios.post('/api/posts',data )
         },
 
-        getPosts(){
+        getPost(){
             axios.get('/api/posts')
             .then(res=>{
                 this.post = res.data.data
